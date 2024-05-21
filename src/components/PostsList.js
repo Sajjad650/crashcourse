@@ -43,9 +43,7 @@ export default function PostsList({ isPosting, onStopPosting }) {
       )}
 
       <ul className={classes.posts}>
-        {posts.map((post) => (
-          <Post author="mannul" body="check out full course" />
-        ))}
+        <Post author="mannul" body="check out full course" />
       </ul>
     </>
   );
