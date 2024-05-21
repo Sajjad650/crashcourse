@@ -1,42 +1,50 @@
-import React from 'react'
-import Post from './Post'
+import React, { useState } from "react";
+import Post from "./Post";
 import classes from "./PostsList.module.css";
-import NewPost from './NewPost';
-import { useState } from 'react';
-import Modal from './Modal';
-export default function PostsList() {
+import NewPost from "./NewPost";
+import Modal from "./Modal";
 
-    const [modalIsVisible, setModalIsVisible]= useState(true);
-    const[enteredBody, setEnteredBody]=useState('');
-    const[enteredAuthor, setEnteredAuthor]=useState('');
+export default function PostsList({ isPosting, onStopPosting }) {
+  const [posts, setPosts] = useState([]); // State to hold posts
+  const [enteredBody, setEnteredBody] = useState("");
+  const [enteredAuthor, setEnteredAuthor] = useState("");
 
-function hideModalHandler(){
-    setModalIsVisible(false);
-    
-}
+  function bodyChangeHandler(event) {
+    setEnteredBody(event.target.value);
+  }
 
-    function bodyChangeHandler(event){
-setEnteredBody(event.target.value);
-    }
-
-    function authorChangeHandler(event){
+  function authorChangeHandler(event) {
     setEnteredAuthor(event.target.value);
-            }
-            
-            let modalContent;
-            if (modalIsVisible){
-                modalContent=(<Modal onClose={hideModalHandler}>
-                    <NewPost onBodyChange={bodyChangeHandler}   onAuthorChange={authorChangeHandler}/></Modal>)
-            }
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const newPost = {
+      id: Date.now(),
+      author: enteredAuthor,
+      body: enteredBody,
+    };
+    setPosts((prevPosts) => [...prevPosts, newPost]); // Add new post to posts array
+    setEnteredAuthor(""); // Clear input fields after submission
+    setEnteredBody("");
+    onStopPosting(); // Close modal after submission
+  }
+
   return (
     <>
-   {modalContent}
-   
-        <ul className={classes.posts}>
-        <Post author={enteredAuthor} body={enteredBody}/>
-    <Post author="melium" body="awsome code"/>
-    </ul>
-      
+      {isPosting && (
+        <Modal onClose={onStopPosting}>
+          <NewPost
+            onBodyChange={bodyChangeHandler}
+            onAuthorChange={authorChangeHandler}
+            onSubmit={handleSubmit}
+          />
+        </Modal>
+      )}
+
+      <ul className={classes.posts}>
+        <Post author="mannul" body="check out full course" />
+      </ul>
     </>
-  )
+  );
 }
