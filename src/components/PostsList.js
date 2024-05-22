@@ -5,7 +5,7 @@ import NewPost from "./NewPost";
 import Modal from "./Modal";
 
 export default function PostsList({ isPosting, onStopPosting }) {
-  const [posts, setPosts] = useState([]); // State to hold posts
+  const [posts, setPosts] = useState([]);
   const [enteredBody, setEnteredBody] = useState("");
   const [enteredAuthor, setEnteredAuthor] = useState("");
 
@@ -20,31 +20,44 @@ export default function PostsList({ isPosting, onStopPosting }) {
   function handleSubmit(event) {
     event.preventDefault();
     const newPost = {
-      id: Date.now(),
       author: enteredAuthor,
       body: enteredBody,
     };
-    setPosts((prevPosts) => [...prevPosts, newPost]); // Add new post to posts array
-    setEnteredAuthor(""); // Clear input fields after submission
+    setPosts((prevPosts) => [...prevPosts, newPost]);
+    setEnteredAuthor("");
     setEnteredBody("");
-    onStopPosting(); // Close modal after submission
+    onStopPosting();
+  }
+
+  function handleCancel() {
+    onStopPosting();
   }
 
   return (
     <>
       {isPosting && (
-        <Modal onClose={onStopPosting}>
+        <Modal onClose={handleCancel}>
           <NewPost
             onBodyChange={bodyChangeHandler}
             onAuthorChange={authorChangeHandler}
             onSubmit={handleSubmit}
+            onCancel={handleCancel}
           />
         </Modal>
       )}
 
-      <ul className={classes.posts}>
-        <Post author="mannul" body="check out full course" />
-      </ul>
+      {posts.length === 0 ? (
+        <div style={{ textAlign: "center", color: "white" }}>
+          <h2>There are no posts yet</h2>
+          <p>Start adding some!</p>
+        </div>
+      ) : (
+        <ul className={classes.posts}>
+          {posts.map((post) => (
+            <Post key={post.id} author={post.author} body={post.body} />
+          ))}
+        </ul>
+      )}
     </>
   );
 }
